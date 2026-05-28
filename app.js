@@ -5,7 +5,7 @@ const resetBookmarkletLink = document.getElementById("reset-bookmarklet");
 const toggleFingerprintEl = document.getElementById("toggle-fingerprint");
 const resetFingerprintEl = document.getElementById("reset-fingerprint");
 const copyButton = document.getElementById("copy");
-const RELEASE_VERSION = "v1.1.0";
+const RELEASE_VERSION = "v1.2.0";
 
 function buildBookmarkletSource(mode = "toggle") {
   const isReset = mode === "reset";
@@ -62,6 +62,27 @@ function buildBookmarkletSource(mode = "toggle") {
         } catch (err) {
           return false;
         }
+      }
+
+      function siteProfileForHost(host) {
+        if (!host) return "";
+        if (
+          host === "docs.google.com" ||
+          host === "drive.google.com" ||
+          host === "mail.google.com" ||
+          host === "calendar.google.com" ||
+          host === "sheets.google.com" ||
+          host === "slides.google.com" ||
+          host === "github.com" ||
+          host === "gist.github.com" ||
+          host === "www.youtube.com" ||
+          host === "studio.youtube.com" ||
+          host === "notion.so" ||
+          host.endsWith(".notion.site")
+        ) {
+          return "gentle";
+        }
+        return "";
       }
 
       function installSecurityPolicyWatcher() {
@@ -135,8 +156,10 @@ function buildBookmarkletSource(mode = "toggle") {
       function modeForPage() {
         var luminance = visiblePageBrightness();
         if (luminance < 82) return "dark";
+        var profile = siteProfileForHost(u);
+        if (profile) return profile;
         if (luminance > 176) return "bright";
-        return "mixed";
+        return "gentle";
       }
 
       function ensureStyle() {
@@ -152,6 +175,14 @@ function buildBookmarkletSource(mode = "toggle") {
             "html{color-scheme:dark!important}" +
             "body{color-scheme:dark!important}" +
             "input,textarea,select,button{color-scheme:dark!important}";
+        } else if (mode === "gentle") {
+          e.textContent =
+            "html{background:#0b0f14!important;color-scheme:dark!important}" +
+            "body{background:#0b0f14!important;color:#e8edf7!important}" +
+            "a{color:#8ab4f8!important}" +
+            "img,video,picture,canvas,svg,iframe{filter:brightness(.94) contrast(.98) saturate(.96)!important}" +
+            "input,textarea,select,button{color-scheme:dark!important;background-color:rgba(255,255,255,.04)!important;color:#e8edf7!important}" +
+            "::selection{background:rgba(120,242,174,.28)!important;color:#fff!important}";
         } else {
           e.textContent =
             "html{background:#0b0f14!important;color-scheme:dark!important}" +

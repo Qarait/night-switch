@@ -8,6 +8,7 @@ Night Switch is a small bookmarklet for people who want a quick dark mode withou
 - Already-dark pages stay mostly as they are.
 - The floating control lives in a shadow root so the host page has less room to interfere.
 - A reset bookmarklet is included in case a page needs a clean exit.
+- A small site-profile list keeps a few complex web apps on a gentler preset.
 
 ## Trust
 
@@ -72,6 +73,7 @@ That keeps the setup simple:
 
 - Keep darkening-rule changes conservative.
 - Before changing the rules again, sanity-check a bright news page, an already-dark page, and a content-heavy forum page.
+- Check one complex web app from the site-profile list as well, because that preset is the one most likely to drift.
 
 ## Notes
 
