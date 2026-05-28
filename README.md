@@ -25,6 +25,8 @@ From there you can:
 
 If you want other people to use it, publish this folder with GitHub Pages and share the page link.
 
+Live site: https://qarait.github.io/night-switch/
+
 That keeps the setup simple:
 
 1. they open the page
