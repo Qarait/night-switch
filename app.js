@@ -11,6 +11,7 @@ function buildBookmarkletSource() {
       var s = "__night_switch_style__";
       var b = "__night_switch_button__";
       var t = "__night_switch_toast__";
+      var r = "__night_switch_root__";
       var u = w.location.hostname || "this site";
       var buttonLabel = "NS";
       var buttonTitle = "Night Switch is on. Click to turn it off.";
@@ -96,19 +97,36 @@ function buildBookmarkletSource() {
         d.documentElement.appendChild(e);
       }
 
+      function ensureUiRoot() {
+        var host = d.getElementById(r);
+        if (!host) {
+          host = d.createElement("div");
+          host.id = r;
+          host.style.cssText =
+            "all:initial;position:fixed;inset:0;pointer-events:none;z-index:2147483647";
+          (d.body || d.documentElement).appendChild(host);
+        }
+
+        if (host.shadowRoot) return host.shadowRoot;
+        if (host.attachShadow) return host.attachShadow({ mode: "open" });
+        return host;
+      }
+
       function ensureButton() {
-        var n = d.getElementById(b);
+        var root = ensureUiRoot();
+        var n = root.querySelector ? root.querySelector("#" + b) : d.getElementById(b);
         if (n) return;
 
         n = d.createElement("button");
         n.id = b;
+        n.type = "button";
         n.textContent = buttonLabel + " On";
         n.title = buttonTitle;
         n.setAttribute("aria-label", buttonTitle);
         n.style.cssText =
-          "position:fixed;z-index:2147483647;top:12px;right:12px;padding:8px 11px;border:1px solid rgba(120,242,174,.24);border-radius:999px;background:rgba(11,15,20,.8);color:#dfffea;font:600 11px/1.1 system-ui,-apple-system,Segoe UI,sans-serif;box-shadow:0 6px 16px rgba(0,0,0,.22);cursor:pointer;backdrop-filter:blur(8px);opacity:.82";
+          "pointer-events:auto;position:fixed;top:12px;right:12px;padding:8px 11px;border:1px solid rgba(120,242,174,.24);border-radius:999px;background:rgba(11,15,20,.8);color:#dfffea;font:600 11px/1.1 system-ui,-apple-system,Segoe UI,sans-serif;box-shadow:0 6px 16px rgba(0,0,0,.22);cursor:pointer;backdrop-filter:blur(8px);opacity:.82";
         n.onclick = toggle;
-        d.body.appendChild(n);
+        root.appendChild(n);
       }
 
       function turnOn() {
@@ -118,19 +136,20 @@ function buildBookmarkletSource() {
 
       function turnOff() {
         var e = d.getElementById(s);
-        var n = d.getElementById(b);
+        var n = d.getElementById(r);
         if (e) e.remove();
         if (n) n.remove();
       }
 
       function toast(m) {
-        var e = d.getElementById(t);
+        var root = ensureUiRoot();
+        var e = root.querySelector ? root.querySelector("#" + t) : d.getElementById(t);
         if (!e) {
           e = d.createElement("div");
           e.id = t;
           e.style.cssText =
-            "position:fixed;z-index:2147483647;left:50%;bottom:16px;transform:translateX(-50%);padding:7px 11px;border-radius:999px;background:rgba(11,15,20,.88);color:#eff3ff;font:600 11px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;box-shadow:0 8px 20px rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);opacity:.92";
-          d.body.appendChild(e);
+            "pointer-events:none;position:fixed;z-index:2147483647;left:50%;bottom:16px;transform:translateX(-50%);padding:7px 11px;border-radius:999px;background:rgba(11,15,20,.88);color:#eff3ff;font:600 11px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;box-shadow:0 8px 20px rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);opacity:.92";
+          root.appendChild(e);
         }
         e.textContent = m;
         clearTimeout(e.__timer);

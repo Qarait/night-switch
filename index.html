@@ -13,7 +13,8 @@
         <h1>Night Switch</h1>
         <p class="lede">
           Save the button below as a bookmark, then click it on any bright website to
-          toggle a quick dark mode.
+          toggle a quick dark mode. It runs when you click it, so it is lightweight on
+          purpose.
         </p>
 
         <div class="actions">
@@ -37,8 +38,17 @@
         <h2>What it does</h2>
         <ul>
           <li>Darkens the current page with a single click.</li>
-          <li>Remembers the state per site in your browser.</li>
-          <li>Shows a small floating toggle so you do not get lost.</li>
+          <li>Remembers the last on or off choice for that site in browser storage.</li>
+          <li>Shows a small floating toggle inside a shadow root so host styles stay out of the way.</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>Limits</h2>
+        <ul>
+          <li>You still need to click the bookmarklet on each page load.</li>
+          <li>Some sites with strict CSP rules may block the injected styling.</li>
+          <li>Very complex pages may still need a little manual tuning.</li>
         </ul>
       </section>
     </main>

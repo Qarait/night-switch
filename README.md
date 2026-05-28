@@ -10,7 +10,14 @@ The bookmarklet is deliberately lightweight:
 
 - bright pages get a darker treatment
 - already-dark pages stay mostly as they are
+- the floating button lives in a shadow root so host styles do not interfere as much
 - some sites may still need a bit of tuning
+
+## Limits
+
+- You still need to click the bookmarklet on each page load.
+- Some sites with strict CSP rules may block the injected styling.
+- It is a bookmarklet, so it does not auto-run in the background like an extension.
 
 ## Local use
 
