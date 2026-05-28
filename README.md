@@ -4,6 +4,12 @@ Night Switch is a small bookmarklet for people who want a quick dark mode withou
 
 It ships as a tiny landing page, a drag-to-bookmarks bookmarklet, and a reset fallback for recovery.
 
+## Demo
+
+Live demo: https://qarait.github.io/night-switch/
+
+Open the page, drag the green button to your bookmarks bar, then click it on a bright website. The gray reset bookmarklet is there if a page needs a clean exit.
+
 ## What it does
 
 - Bright pages get a darker treatment.
@@ -28,6 +34,17 @@ It ships as a tiny landing page, a drag-to-bookmarks bookmarklet, and a reset fa
 4. Click the bookmarklet.
 
 If you want to undo it on a problem page, drag the gray reset bookmarklet to your bookmarks bar and click it on that site.
+
+## How to test
+
+If you want to sanity-check the build before sharing it:
+
+1. Open the live demo page.
+2. Drag the green button to your bookmarks bar.
+3. Try it on a bright news page like BBC News.
+4. Try it on a content-heavy page or forum.
+5. Try it on an already-dark site such as GitHub or YouTube.
+6. Use the reset bookmarklet if a page looks wrong.
 
 ## Limits
 
@@ -66,6 +83,12 @@ That keeps the setup simple:
 1. they open the page
 2. they drag the button
 3. they use the bookmarklet on any site
+
+## Common site notes
+
+- Google Docs, Drive, Mail, Calendar, and Sheets use the gentler preset.
+- GitHub, YouTube, and Notion also use the gentler preset.
+- If a site should be left alone entirely, add it to the skip list on the landing page before you drag the bookmarklet again.
 
 ## Launch copy
 
