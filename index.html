@@ -11,6 +11,7 @@
       <section class="hero">
         <p class="eyebrow">Bookmarklet dark mode</p>
         <h1>Night Switch</h1>
+        <p class="release" id="release-tag">Release v1.1.0</p>
         <p class="lede">
           Save the button below as a bookmark, then click it on any bright website to turn
           on a quick dark mode. It runs when you click it, so it is lightweight on
@@ -20,6 +21,11 @@
         <div class="actions">
           <a id="bookmarklet" class="bookmarklet" href="#">Drag me to bookmarks</a>
           <button id="copy" class="secondary" type="button">Copy code</button>
+        </div>
+
+        <div class="fingerprints" aria-label="Bookmarklet fingerprints">
+          <p class="fingerprint" id="toggle-fingerprint">Toggle fingerprint: loading...</p>
+          <p class="fingerprint" id="reset-fingerprint">Reset fingerprint: loading...</p>
         </div>
 
         <p class="status" id="status" aria-live="polite">Ready to copy.</p>
@@ -41,6 +47,15 @@
           <li>Remembers the last on or off choice for that site in browser storage.</li>
           <li>Shows a small floating toggle inside a shadow root so host styles stay out of the way.</li>
           <li>Includes a reset bookmarklet in case a page needs a clean exit.</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>Trust</h2>
+        <ul>
+          <li>No remote code is loaded at runtime.</li>
+          <li>No analytics or tracking scripts are included.</li>
+          <li>The fingerprints above match the exact bookmarklet text you drag to your bookmarks bar.</li>
         </ul>
       </section>
 

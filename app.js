@@ -1,7 +1,11 @@
 const statusEl = document.getElementById("status");
+const releaseTagEl = document.getElementById("release-tag");
 const bookmarkletLink = document.getElementById("bookmarklet");
 const resetBookmarkletLink = document.getElementById("reset-bookmarklet");
+const toggleFingerprintEl = document.getElementById("toggle-fingerprint");
+const resetFingerprintEl = document.getElementById("reset-fingerprint");
 const copyButton = document.getElementById("copy");
+const RELEASE_VERSION = "v1.1.0";
 
 function buildBookmarkletSource(mode = "toggle") {
   const isReset = mode === "reset";
@@ -17,39 +21,66 @@ function buildBookmarkletSource(mode = "toggle") {
       var u = w.location.hostname || "this site";
       var buttonLabel = "NS";
       var buttonTitle = "Night Switch is on. Click to turn it off.";
+      var storageWarningShown = false;
+      var styleWarningShown = false;
+      var cspWatcherInstalled = false;
 
-      function safeStorage() {
+      function warnStorageBlocked() {
+        if (storageWarningShown) return;
+        storageWarningShown = true;
+        toast("Night Switch can run here, but this browser blocked saved state.");
+      }
+
+      function warnStyleBlocked() {
+        if (styleWarningShown) return;
+        styleWarningShown = true;
+        toast("Night Switch could not fully apply here because this site blocked part of the styling.");
+      }
+
+      function readSavedState() {
         try {
-          return w.localStorage;
+          return { ok: true, value: w.localStorage.getItem(k) };
         } catch (err) {
-          return null;
+          return { ok: false, value: null };
         }
       }
 
-      function safeGetSavedState() {
-        var storage = safeStorage();
-        if (!storage) return null;
+      function writeSavedState(value) {
         try {
-          return storage.getItem(k);
+          w.localStorage.setItem(k, value);
+          return true;
         } catch (err) {
-          return null;
+          warnStorageBlocked();
+          return false;
         }
       }
 
-      function safeSetSavedState(value) {
-        var storage = safeStorage();
-        if (!storage) return;
+      function removeSavedState() {
         try {
-          storage.setItem(k, value);
-        } catch (err) {}
+          w.localStorage.removeItem(k);
+          return true;
+        } catch (err) {
+          return false;
+        }
       }
 
-      function safeRemoveSavedState() {
-        var storage = safeStorage();
-        if (!storage) return;
-        try {
-          storage.removeItem(k);
-        } catch (err) {}
+      function installSecurityPolicyWatcher() {
+        if (cspWatcherInstalled || !d.addEventListener) return;
+        cspWatcherInstalled = true;
+        d.addEventListener(
+          "securitypolicyviolation",
+          function (event) {
+            var directive = String(event.violatedDirective || event.effectiveDirective || "").toLowerCase();
+            if (
+              directive.indexOf("style-src") !== -1 ||
+              directive.indexOf("style-src-elem") !== -1 ||
+              directive.indexOf("style-src-attr") !== -1
+            ) {
+              warnStyleBlocked();
+            }
+          },
+          true
+        );
       }
 
       function luminanceFromColor(value) {
@@ -112,6 +143,7 @@ function buildBookmarkletSource(mode = "toggle") {
         var e = d.getElementById(s);
         if (e) return;
 
+        installSecurityPolicyWatcher();
         var mode = modeForPage();
         e = d.createElement("style");
         e.id = s;
@@ -130,7 +162,13 @@ function buildBookmarkletSource(mode = "toggle") {
             "input,textarea,select,button{color-scheme:dark!important;background-color:rgba(255,255,255,.04)!important;color:#e8edf7!important}" +
             "::selection{background:rgba(120,242,174,.28)!important;color:#fff!important}";
         }
-        d.documentElement.appendChild(e);
+        try {
+          d.documentElement.appendChild(e);
+        } catch (err) {
+          warnStyleBlocked();
+          return false;
+        }
+        return true;
       }
 
       function ensureUiRoot() {
@@ -171,8 +209,9 @@ function buildBookmarkletSource(mode = "toggle") {
       }
 
       function turnOn() {
-        ensureStyle();
+        var applied = ensureStyle();
         ensureButton();
+        if (!applied) return;
       }
 
       function turnOff() {
@@ -199,23 +238,26 @@ function buildBookmarkletSource(mode = "toggle") {
         }, 1600);
       }
 
-      var enabled = safeGetSavedState() === "1";
+      var savedState = readSavedState();
+      var enabled = savedState.value === "1";
 
       function toggle() {
         enabled = !enabled;
         if (enabled) {
-          safeSetSavedState("1");
+          writeSavedState("1");
           turnOn();
+          if (!savedState.ok) warnStorageBlocked();
           toast("Night Switch on for " + u);
         } else {
-          safeSetSavedState("0");
+          writeSavedState("0");
           turnOff();
+          if (!savedState.ok) warnStorageBlocked();
           toast("Night Switch off for " + u);
         }
       }
 
       function resetNow() {
-        safeRemoveSavedState();
+        removeSavedState();
         turnOff();
       }
 
@@ -240,6 +282,15 @@ function configureBookmarkletLink(link, source, label) {
   return source;
 }
 
+function fingerprintSource(source) {
+  let hash = 2166136261;
+  for (let i = 0; i < source.length; i += 1) {
+    hash ^= source.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `fp-${(hash >>> 0).toString(16).padStart(8, "0")}`;
+}
+
 function updateBookmarkletHref() {
   return configureBookmarkletLink(
     bookmarkletLink,
@@ -254,6 +305,23 @@ function updateResetBookmarkletHref() {
     buildBookmarkletSource("reset"),
     "Drag this reset bookmarklet to your bookmarks bar",
   );
+}
+
+function updateSourceMetadata() {
+  const toggleSource = updateBookmarkletHref();
+  const resetSource = updateResetBookmarkletHref();
+
+  if (releaseTagEl) {
+    releaseTagEl.textContent = `Release ${RELEASE_VERSION}`;
+  }
+
+  if (toggleFingerprintEl) {
+    toggleFingerprintEl.textContent = `Toggle fingerprint: ${fingerprintSource(toggleSource)}`;
+  }
+
+  if (resetFingerprintEl) {
+    resetFingerprintEl.textContent = `Reset fingerprint: ${fingerprintSource(resetSource)}`;
+  }
 }
 
 async function copyBookmarklet() {
@@ -278,5 +346,4 @@ resetBookmarkletLink.addEventListener("click", (event) => {
 
 copyButton.addEventListener("click", copyBookmarklet);
 
-updateBookmarkletHref();
-updateResetBookmarkletHref();
+updateSourceMetadata();

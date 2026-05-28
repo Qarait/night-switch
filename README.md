@@ -9,6 +9,12 @@ Night Switch is a small bookmarklet for people who want a quick dark mode withou
 - The floating control lives in a shadow root so the host page has less room to interfere.
 - A reset bookmarklet is included in case a page needs a clean exit.
 
+## Trust
+
+- No remote code is loaded at runtime.
+- No analytics or tracking scripts are included.
+- The release tag and fingerprints on the landing page match the exact bookmarklet text you drag to your bookmarks bar.
+
 ## Use it
 
 1. Open the landing page.
@@ -26,7 +32,13 @@ If you want to undo it on a problem page, drag the gray reset bookmarklet to you
 
 ## Compatibility
 
-Tested in Chrome and Edge. Other browsers may behave differently with bookmarklets, clipboard access, or site restrictions.
+| Environment | Status | Notes |
+| --- | --- | --- |
+| Chrome desktop | Tested | Best setup path for the bookmarklet page |
+| Edge desktop | Tested | Behaves the same as Chrome for normal use |
+| Firefox desktop | Limited | Bookmarklet behavior can vary by browser settings |
+| Safari desktop | Limited | Bookmarklet and clipboard behavior can differ |
+| Mobile browsers | Limited | Bookmarklets are usually awkward to set up |
 
 ## Local use
 
@@ -55,6 +67,11 @@ That keeps the setup simple:
 - `index.html`: landing page
 - `style.css`: page styling
 - `app.js`: bookmarklet generator
+
+## Development notes
+
+- Keep darkening-rule changes conservative.
+- Before changing the rules again, sanity-check a bright news page, an already-dark page, and a content-heavy forum page.
 
 ## Notes
 
