@@ -100,6 +100,13 @@ h1 {
   box-shadow: 0 12px 28px rgba(69, 210, 129, 0.28);
 }
 
+.bookmarklet--secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  border-color: var(--border);
+  box-shadow: none;
+}
+
 .secondary {
   background: rgba(255, 255, 255, 0.04);
   color: var(--text);
@@ -117,6 +124,12 @@ h1 {
   min-height: 1.4em;
   color: var(--muted);
   font-size: 0.95rem;
+}
+
+.note {
+  margin: 0 0 14px;
+  color: var(--muted);
+  line-height: 1.6;
 }
 
 h2 {

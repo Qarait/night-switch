@@ -12,8 +12,8 @@
         <p class="eyebrow">Bookmarklet dark mode</p>
         <h1>Night Switch</h1>
         <p class="lede">
-          Save the button below as a bookmark, then click it on any bright website to
-          toggle a quick dark mode. It runs when you click it, so it is lightweight on
+          Save the button below as a bookmark, then click it on any bright website to turn
+          on a quick dark mode. It runs when you click it, so it is lightweight on
           purpose.
         </p>
 
@@ -30,7 +30,7 @@
         <ol>
           <li>Drag the green button to your bookmarks bar.</li>
           <li>Open any website that feels too bright.</li>
-          <li>Click the bookmark to toggle Night Switch on or off.</li>
+          <li>Click the bookmark to turn Night Switch on, then use the floating control if you want to switch it off again.</li>
         </ol>
       </section>
 
@@ -40,6 +40,7 @@
           <li>Darkens the current page with a single click.</li>
           <li>Remembers the last on or off choice for that site in browser storage.</li>
           <li>Shows a small floating toggle inside a shadow root so host styles stay out of the way.</li>
+          <li>Includes a reset bookmarklet in case a page needs a clean exit.</li>
         </ul>
       </section>
 
@@ -49,7 +50,21 @@
           <li>You still need to click the bookmarklet on each page load.</li>
           <li>Some sites with strict CSP rules may block the injected styling.</li>
           <li>Very complex pages may still need a little manual tuning.</li>
+          <li>Chrome and Edge are the main browsers I tested; other browsers may vary.</li>
         </ul>
+      </section>
+
+      <section class="panel">
+        <h2>Recovery</h2>
+        <p class="note">
+          If a page looks off, drag the reset bookmarklet below and click it on that site to
+          clear Night Switch and remove the injected UI.
+        </p>
+        <div class="actions">
+          <a id="reset-bookmarklet" class="bookmarklet bookmarklet--secondary" href="#">
+            Reset Night Switch
+          </a>
+        </div>
       </section>
     </main>
 

@@ -2,22 +2,31 @@
 
 Night Switch is a small bookmarklet for people who want a quick dark mode without installing a browser extension.
 
-## How it works
+## What it does
 
-Open the landing page, drag the green button to your bookmarks bar, then click it on any site that feels too bright.
+- Bright pages get a darker treatment.
+- Already-dark pages stay mostly as they are.
+- The floating control lives in a shadow root so the host page has less room to interfere.
+- A reset bookmarklet is included in case a page needs a clean exit.
 
-The bookmarklet is deliberately lightweight:
+## Use it
 
-- bright pages get a darker treatment
-- already-dark pages stay mostly as they are
-- the floating button lives in a shadow root so host styles do not interfere as much
-- some sites may still need a bit of tuning
+1. Open the landing page.
+2. Drag the green button to your bookmarks bar.
+3. Open a site that feels too bright.
+4. Click the bookmarklet.
+
+If you want to undo it on a problem page, drag the gray reset bookmarklet to your bookmarks bar and click it on that site.
 
 ## Limits
 
 - You still need to click the bookmarklet on each page load.
 - Some sites with strict CSP rules may block the injected styling.
-- It is a bookmarklet, so it does not auto-run in the background like an extension.
+- Very complex pages may still need a little tuning.
+
+## Compatibility
+
+Tested in Chrome and Edge. Other browsers may behave differently with bookmarklets, clipboard access, or site restrictions.
 
 ## Local use
 
@@ -27,6 +36,7 @@ From there you can:
 
 - drag the green button to your bookmarks bar
 - click `Copy code` if you prefer to paste the bookmarklet into a bookmark manually
+- use the reset bookmarklet if a page gets into a bad state
 
 ## Sharing it
 

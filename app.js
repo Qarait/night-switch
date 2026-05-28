@@ -1,8 +1,10 @@
 const statusEl = document.getElementById("status");
 const bookmarkletLink = document.getElementById("bookmarklet");
+const resetBookmarkletLink = document.getElementById("reset-bookmarklet");
 const copyButton = document.getElementById("copy");
 
-function buildBookmarkletSource() {
+function buildBookmarkletSource(mode = "toggle") {
+  const isReset = mode === "reset";
   const bookmarklet = `
     (function () {
       var w = window;
@@ -15,6 +17,40 @@ function buildBookmarkletSource() {
       var u = w.location.hostname || "this site";
       var buttonLabel = "NS";
       var buttonTitle = "Night Switch is on. Click to turn it off.";
+
+      function safeStorage() {
+        try {
+          return w.localStorage;
+        } catch (err) {
+          return null;
+        }
+      }
+
+      function safeGetSavedState() {
+        var storage = safeStorage();
+        if (!storage) return null;
+        try {
+          return storage.getItem(k);
+        } catch (err) {
+          return null;
+        }
+      }
+
+      function safeSetSavedState(value) {
+        var storage = safeStorage();
+        if (!storage) return;
+        try {
+          storage.setItem(k, value);
+        } catch (err) {}
+      }
+
+      function safeRemoveSavedState() {
+        var storage = safeStorage();
+        if (!storage) return;
+        try {
+          storage.removeItem(k);
+        } catch (err) {}
+      }
 
       function luminanceFromColor(value) {
         if (!value) return 255;
@@ -112,6 +148,11 @@ function buildBookmarkletSource() {
         return host;
       }
 
+      function removeElement(id) {
+        var el = d.getElementById(id);
+        if (el) el.remove();
+      }
+
       function ensureButton() {
         var root = ensureUiRoot();
         var n = root.querySelector ? root.querySelector("#" + b) : d.getElementById(b);
@@ -135,10 +176,10 @@ function buildBookmarkletSource() {
       }
 
       function turnOff() {
-        var e = d.getElementById(s);
-        var n = d.getElementById(r);
-        if (e) e.remove();
-        if (n) n.remove();
+        removeElement(s);
+        removeElement(t);
+        removeElement(b);
+        removeElement(r);
       }
 
       function toast(m) {
@@ -158,20 +199,29 @@ function buildBookmarkletSource() {
         }, 1600);
       }
 
+      var enabled = safeGetSavedState() === "1";
+
       function toggle() {
-        var enabled = w.localStorage.getItem(k) === "1";
+        enabled = !enabled;
         if (enabled) {
-          w.localStorage.setItem(k, "0");
-          turnOff();
-          toast("Night Switch off for " + u);
-        } else {
-          w.localStorage.setItem(k, "1");
+          safeSetSavedState("1");
           turnOn();
           toast("Night Switch on for " + u);
+        } else {
+          safeSetSavedState("0");
+          turnOff();
+          toast("Night Switch off for " + u);
         }
       }
 
-      if (w.localStorage.getItem(k) === "1") {
+      function resetNow() {
+        safeRemoveSavedState();
+        turnOff();
+      }
+
+      if (${isReset ? "true" : "false"}) {
+        resetNow();
+      } else if (enabled) {
         turnOn();
         toast("Night Switch on for " + u);
       } else {
@@ -183,12 +233,27 @@ function buildBookmarkletSource() {
   return `javascript:${bookmarklet.replace(/\n\s*/g, "")}`;
 }
 
-function updateBookmarkletHref() {
-  const source = buildBookmarkletSource();
-  bookmarkletLink.href = source;
-  bookmarkletLink.setAttribute("draggable", "true");
-  bookmarkletLink.setAttribute("aria-label", "Drag this bookmarklet to your bookmarks bar");
+function configureBookmarkletLink(link, source, label) {
+  link.href = source;
+  link.setAttribute("draggable", "true");
+  link.setAttribute("aria-label", label);
   return source;
+}
+
+function updateBookmarkletHref() {
+  return configureBookmarkletLink(
+    bookmarkletLink,
+    buildBookmarkletSource("toggle"),
+    "Drag this bookmarklet to your bookmarks bar",
+  );
+}
+
+function updateResetBookmarkletHref() {
+  return configureBookmarkletLink(
+    resetBookmarkletLink,
+    buildBookmarkletSource("reset"),
+    "Drag this reset bookmarklet to your bookmarks bar",
+  );
 }
 
 async function copyBookmarklet() {
@@ -206,6 +271,12 @@ bookmarkletLink.addEventListener("click", (event) => {
   statusEl.textContent = "Drag this green button to your bookmarks bar, then click it on any site.";
 });
 
+resetBookmarkletLink.addEventListener("click", (event) => {
+  event.preventDefault();
+  statusEl.textContent = "Drag the gray reset button to your bookmarks bar if you need an escape hatch.";
+});
+
 copyButton.addEventListener("click", copyBookmarklet);
 
 updateBookmarkletHref();
+updateResetBookmarkletHref();
