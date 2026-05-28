@@ -11,7 +11,7 @@
       <section class="hero">
         <p class="eyebrow">Bookmarklet dark mode</p>
         <h1>Night Switch</h1>
-        <p class="release" id="release-tag">Release v1.2.0</p>
+        <p class="release" id="release-tag">Release v1.3.0</p>
         <p class="lede">
           Save the button below as a bookmark, then click it on any bright website to turn
           on a quick dark mode. It runs when you click it, so it is lightweight on
@@ -26,6 +26,15 @@
         <div class="fingerprints" aria-label="Bookmarklet fingerprints">
           <p class="fingerprint" id="toggle-fingerprint">Toggle fingerprint: loading...</p>
           <p class="fingerprint" id="reset-fingerprint">Reset fingerprint: loading...</p>
+        </div>
+
+        <div class="verification">
+          <p class="verification-note" id="verification-note">
+            Copy this verification string if you want to confirm the exact build later.
+          </p>
+          <button id="copy-verification" class="secondary" type="button">
+            Copy verification text
+          </button>
         </div>
 
         <p class="status" id="status" aria-live="polite">Ready to copy.</p>
@@ -57,6 +66,27 @@
           <li>Regular content pages still get the stronger page-wide treatment.</li>
           <li>A small built-in list keeps a few known-heavy sites from getting overprocessed.</li>
         </ul>
+      </section>
+
+      <section class="panel">
+        <h2>Skip list</h2>
+        <p class="note">
+          Add sites here if you want Night Switch to skip them entirely. One host per line or
+          comma-separated. This list is stored in your browser only and is baked into the
+          bookmarklet when you drag the green button again.
+        </p>
+        <textarea
+          id="skip-list"
+          class="skip-list"
+          rows="6"
+          spellcheck="false"
+          placeholder="example.com&#10;*.bank.example&#10;news.example.org"
+        ></textarea>
+        <div class="actions">
+          <button id="reset-skip-list" class="secondary" type="button">
+            Reset skip list
+          </button>
+        </div>
       </section>
 
       <section class="panel">

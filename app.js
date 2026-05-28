@@ -4,8 +4,64 @@ const bookmarkletLink = document.getElementById("bookmarklet");
 const resetBookmarkletLink = document.getElementById("reset-bookmarklet");
 const toggleFingerprintEl = document.getElementById("toggle-fingerprint");
 const resetFingerprintEl = document.getElementById("reset-fingerprint");
+const verificationNoteEl = document.getElementById("verification-note");
+const copyVerificationButton = document.getElementById("copy-verification");
+const skipListEl = document.getElementById("skip-list");
+const resetSkipListButton = document.getElementById("reset-skip-list");
 const copyButton = document.getElementById("copy");
-const RELEASE_VERSION = "v1.2.0";
+const RELEASE_VERSION = "v1.3.0";
+const SKIP_LIST_STORAGE_KEY = "__night_switch_skip_list__";
+let currentToggleSource = "";
+let currentResetSource = "";
+let currentToggleFingerprint = "";
+let currentResetFingerprint = "";
+
+function loadStoredSkipListText() {
+  try {
+    return window.localStorage.getItem(SKIP_LIST_STORAGE_KEY) || "";
+  } catch (err) {
+    return "";
+  }
+}
+
+function saveStoredSkipListText(value) {
+  try {
+    window.localStorage.setItem(SKIP_LIST_STORAGE_KEY, value);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+function normalizeSkipEntry(value) {
+  let entry = String(value || "").trim().toLowerCase();
+  if (!entry || entry.startsWith("#")) return "";
+
+  if (/^https?:\/\//i.test(entry)) {
+    try {
+      entry = new URL(entry).hostname.toLowerCase();
+    } catch (err) {
+      return "";
+    }
+  } else {
+    entry = entry.split(/[/?#]/)[0];
+  }
+
+  entry = entry.replace(/\.+$/, "");
+  entry = entry.replace(/\s+/g, "");
+  return entry;
+}
+
+function parseSkipListText(text) {
+  return String(text || "")
+    .split(/[\n,]+/)
+    .map(normalizeSkipEntry)
+    .filter(Boolean);
+}
+
+function getSkipHostList() {
+  return skipListEl ? parseSkipListText(skipListEl.value) : [];
+}
 
 function buildBookmarkletSource(mode = "toggle") {
   const isReset = mode === "reset";
@@ -83,6 +139,28 @@ function buildBookmarkletSource(mode = "toggle") {
           return "gentle";
         }
         return "";
+      }
+
+      var skipHosts = ${JSON.stringify(getSkipHostList())};
+
+      function normalizeSkipHostPattern(value) {
+        return String(value || "")
+          .trim()
+          .toLowerCase()
+          .replace(/^\\*\\./, "")
+          .replace(/^\\./, "")
+          .replace(/\\.+$/, "");
+      }
+
+      function shouldSkipHost(host) {
+        var normalizedHost = String(host || "").trim().toLowerCase().replace(/\\.+$/, "");
+        if (!normalizedHost || !skipHosts.length) return false;
+        for (var i = 0; i < skipHosts.length; i += 1) {
+          var pattern = normalizeSkipHostPattern(skipHosts[i]);
+          if (!pattern) continue;
+          if (normalizedHost === pattern || normalizedHost.endsWith("." + pattern)) return true;
+        }
+        return false;
       }
 
       function installSecurityPolicyWatcher() {
@@ -272,6 +350,13 @@ function buildBookmarkletSource(mode = "toggle") {
       var savedState = readSavedState();
       var enabled = savedState.value === "1";
 
+      if (!${isReset ? "true" : "false"} && shouldSkipHost(u)) {
+        removeSavedState();
+        turnOff();
+        toast("Night Switch is skipped on " + u);
+        return;
+      }
+
       function toggle() {
         enabled = !enabled;
         if (enabled) {
@@ -342,26 +427,55 @@ function updateSourceMetadata() {
   const toggleSource = updateBookmarkletHref();
   const resetSource = updateResetBookmarkletHref();
 
+  currentToggleSource = toggleSource;
+  currentResetSource = resetSource;
+  currentToggleFingerprint = fingerprintSource(toggleSource);
+  currentResetFingerprint = fingerprintSource(resetSource);
+
   if (releaseTagEl) {
     releaseTagEl.textContent = `Release ${RELEASE_VERSION}`;
   }
 
   if (toggleFingerprintEl) {
-    toggleFingerprintEl.textContent = `Toggle fingerprint: ${fingerprintSource(toggleSource)}`;
+    toggleFingerprintEl.textContent = `Toggle fingerprint: ${currentToggleFingerprint}`;
   }
 
   if (resetFingerprintEl) {
-    resetFingerprintEl.textContent = `Reset fingerprint: ${fingerprintSource(resetSource)}`;
+    resetFingerprintEl.textContent = `Reset fingerprint: ${currentResetFingerprint}`;
+  }
+
+  if (verificationNoteEl) {
+    verificationNoteEl.textContent =
+      `Copy this verification string if you want to confirm Release ${RELEASE_VERSION} later.`;
   }
 }
 
 async function copyBookmarklet() {
-  const source = updateBookmarkletHref();
+  const source = currentToggleSource || updateBookmarkletHref();
   try {
     await navigator.clipboard.writeText(source);
     statusEl.textContent = "Bookmarklet code copied. You can paste it into a bookmark URL field.";
   } catch {
     statusEl.textContent = "Copy was blocked. You can still drag the green button to your bookmarks bar.";
+  }
+}
+
+async function copyVerification() {
+  if (!currentToggleSource || !currentResetSource) {
+    updateSourceMetadata();
+  }
+
+  const text = [
+    `Night Switch ${RELEASE_VERSION}`,
+    `Toggle: ${currentToggleFingerprint}`,
+    `Reset: ${currentResetFingerprint}`,
+  ].join(" | ");
+
+  try {
+    await navigator.clipboard.writeText(text);
+    statusEl.textContent = "Verification text copied. It includes the release tag and both fingerprints.";
+  } catch {
+    statusEl.textContent = "Copy was blocked. You can still read the release tag and fingerprints above.";
   }
 }
 
@@ -376,5 +490,30 @@ resetBookmarkletLink.addEventListener("click", (event) => {
 });
 
 copyButton.addEventListener("click", copyBookmarklet);
+
+if (copyVerificationButton) {
+  copyVerificationButton.addEventListener("click", copyVerification);
+}
+
+if (skipListEl) {
+  skipListEl.value = loadStoredSkipListText();
+  skipListEl.addEventListener("input", () => {
+    const persisted = saveStoredSkipListText(skipListEl.value);
+    updateSourceMetadata();
+    if (!persisted) {
+      statusEl.textContent =
+        "Skip list updated for this page, but this browser blocked saving it for later.";
+    }
+  });
+}
+
+if (resetSkipListButton && skipListEl) {
+  resetSkipListButton.addEventListener("click", () => {
+    skipListEl.value = "";
+    saveStoredSkipListText("");
+    updateSourceMetadata();
+    statusEl.textContent = "Skip list cleared. Drag the bookmarklet again to bake in the new exclusions.";
+  });
+}
 
 updateSourceMetadata();

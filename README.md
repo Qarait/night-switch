@@ -2,6 +2,8 @@
 
 Night Switch is a small bookmarklet for people who want a quick dark mode without installing a browser extension.
 
+It ships as a tiny landing page, a drag-to-bookmarks bookmarklet, and a reset fallback for recovery.
+
 ## What it does
 
 - Bright pages get a darker treatment.
@@ -9,12 +11,14 @@ Night Switch is a small bookmarklet for people who want a quick dark mode withou
 - The floating control lives in a shadow root so the host page has less room to interfere.
 - A reset bookmarklet is included in case a page needs a clean exit.
 - A small site-profile list keeps a few complex web apps on a gentler preset.
+- A user-editable skip list lets you exclude sites you do not want to touch at all.
 
 ## Trust
 
 - No remote code is loaded at runtime.
 - No analytics or tracking scripts are included.
 - The release tag and fingerprints on the landing page match the exact bookmarklet text you drag to your bookmarks bar.
+- There is no remote code and no analytics.
 
 ## Use it
 
@@ -62,6 +66,14 @@ That keeps the setup simple:
 1. they open the page
 2. they drag the button
 3. they use the bookmarklet on any site
+
+## Launch copy
+
+Use this if you want a short repo description or a post that sounds plain and direct:
+
+> Night Switch is a bookmarklet for quick dark mode on bright websites. Open the page, drag one button to your bookmarks bar, and click it on any site that needs a darker treatment.
+
+If you are posting on Reddit or GitHub, keep the first line focused on the use case, then link the live page and ask for feedback on usability rather than announcing it like a product launch.
 
 ## Files
 
