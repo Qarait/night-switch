@@ -1,0 +1,148 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  --bg: #0a0d14;
+  --panel: rgba(15, 18, 28, 0.84);
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #eff3ff;
+  --muted: #aab4d6;
+  --accent: #78f2ae;
+  --accent-strong: #45d281;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(69, 210, 129, 0.18), transparent 28%),
+    radial-gradient(circle at 80% 0%, rgba(120, 242, 174, 0.12), transparent 26%),
+    linear-gradient(180deg, #070910 0%, #0b1220 100%);
+  color: var(--text);
+}
+
+.shell {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 48px 20px 56px;
+  display: grid;
+  gap: 18px;
+}
+
+.hero,
+.panel {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+  border-radius: 24px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
+}
+
+.hero {
+  padding: 28px;
+}
+
+.panel {
+  padding: 24px 28px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 6vw, 4.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.lede {
+  margin: 16px 0 0;
+  max-width: 60ch;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.actions {
+  margin-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.bookmarklet,
+.secondary {
+  border-radius: 999px;
+  padding: 14px 18px;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 120ms ease, filter 120ms ease, background 120ms ease;
+}
+
+.bookmarklet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, var(--accent), var(--accent-strong));
+  color: #062312;
+  box-shadow: 0 12px 28px rgba(69, 210, 129, 0.28);
+}
+
+.secondary {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.bookmarklet:hover,
+.secondary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.status {
+  margin: 14px 0 0;
+  min-height: 1.4em;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+}
+
+ol,
+ul {
+  margin: 0;
+  padding-left: 22px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+li + li {
+  margin-top: 6px;
+}
+
+@media (max-width: 640px) {
+  .shell {
+    padding-top: 22px;
+  }
+
+  .hero,
+  .panel {
+    border-radius: 18px;
+  }
+}

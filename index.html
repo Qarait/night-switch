@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Night Switch</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">Bookmarklet dark mode</p>
+        <h1>Night Switch</h1>
+        <p class="lede">
+          Save the button below as a bookmark, then click it on any bright website to
+          toggle a quick dark mode.
+        </p>
+
+        <div class="actions">
+          <a id="bookmarklet" class="bookmarklet" href="#">Drag me to bookmarks</a>
+          <button id="copy" class="secondary" type="button">Copy code</button>
+        </div>
+
+        <p class="status" id="status" aria-live="polite">Ready to copy.</p>
+      </section>
+
+      <section class="panel">
+        <h2>How to use</h2>
+        <ol>
+          <li>Drag the green button to your bookmarks bar.</li>
+          <li>Open any website that feels too bright.</li>
+          <li>Click the bookmark to toggle Night Switch on or off.</li>
+        </ol>
+      </section>
+
+      <section class="panel">
+        <h2>What it does</h2>
+        <ul>
+          <li>Darkens the current page with a single click.</li>
+          <li>Remembers the state per site in your browser.</li>
+          <li>Shows a small floating toggle so you do not get lost.</li>
+        </ul>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
